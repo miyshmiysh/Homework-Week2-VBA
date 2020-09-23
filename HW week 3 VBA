@@ -1,0 +1,92 @@
+Sub VBAHomework()
+    For Each ws In Worksheets
+        ws.Activate
+        Call CalculateSummary
+    Next ws
+End Sub
+Sub CalculateSummary()
+'Start writing your code here
+'declare your variables
+Dim open_num As Double
+Dim close_num As Double
+Dim percent_change As Double
+Dim yearly_change As Double
+Dim total_volume As Double
+Dim ticker
+'find last row in column
+RowCount = Cells(Rows.Count, "A").End(xlUp).Row
+'find first open price
+open_num = Cells(2, "C").Value
+'set total volume to 0
+total_volume = 0
+'loop through ticker symbols
+For i = 2 To RowCount
+    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+        'print the ticker into summary table
+        ticker = Cells(i, 1).Value
+        Range("I" & 2 + j).Value = ticker
+        'print the yearly change into summary table
+        close_num = Cells(i, "F").Value
+        yearly_change = (close_num - open_num)
+        Range("J" & 2 + j).Value = yearly_change
+        If yearly_change > 0 Then
+        Range("J" & 2 + j).Interior.ColorIndex = 4
+        
+        Else
+        Range("J" & 2 + j).Interior.ColorIndex = 3
+        End If
+        
+        'print the percent change into summary table
+        'remember percent change = (yearly change / open price) * 100
+        If open_num = 0 And close_num = 0 Then
+        percent_change = 0
+        ElseIf open_num = 0 And close_num <> 0 Then
+        percent_change = 1
+        Else
+        percent_change = (yearly_change / open_num)
+        Range("K" & 2 + j).Value = percent_change
+        Range("K" & 2 + j).NumberFormat = "0.00%"
+        End If
+        'print the total volume into summary table
+        total_volume = total_volume + Cells(i, 7).Value
+        Range("L" & 2 + j).Value = total_volume
+        'remember, this one is just like how the credit card activity did the brand total
+        'reset total volume & open price & go to next summary row
+        total_volume = 0
+        open_num = Cells(i + 1, "C").Value
+        j = j + 1
+        Else
+        total_volume = total_volume + Cells(i, 7).Value
+    End If
+
+ 
+ 
+ Next i
+ 
+ 'VBA challenge
+ 'Dim total_summary_rows As Double
+  ' total_summary_rows = Cells(Rows.Count, "A").End(xlUp).Row
+ 
+' Dim challenge_summary_row As Integer
+' challenge_summary_row = 2
+  '  For j = 2 To j
+     'If Cells(j, 11).Value = Application.WorksheetFunction.Max(Range("K2:K" & lastSummaryRow)) Then
+    ' Greatestincrease = Cells(j, 11).Value
+     
+'End If
+
+
+'Next
+End
+
+    Debug.Print ActiveSheet.Name
+    Call SetTitle
+End Sub
+Sub SetTitle()
+' Set title row
+    Range("I1").Value = "Ticker"
+    Range("J1").Value = "Yearly Change"
+    Range("K1").Value = "Percent Change"
+    Range("L1").Value = "Total Stock Volume"
+End Sub
+
